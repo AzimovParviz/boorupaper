@@ -19,7 +19,7 @@ def setpaper(file):
         cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"/" + \
         os.path.dirname(os.path.abspath(__file__)) + "/" + file + "\" as POSIX file" + "\'"
         #example:
-        #osascript -e 'tell application "Finder" to set desktop picture to POSIX file "/content/wallpaper/wallpaper.png"'
+        #osascript -e 'tell application "Finder" to set desktop picture to "/path-to-script/wallpaper.png" as POSIX file'
         print(cmd)
         subprocess.call(cmd, shell=True)
 
