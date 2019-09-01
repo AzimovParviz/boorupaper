@@ -5,7 +5,8 @@ import ssl
 import subprocess
 import os
 import random
-import shutil
+import pathlib
+
 
 def image_scrape(url, file_type, folder):
         extension = file_type
@@ -40,7 +41,7 @@ ua = UserAgent(verify_ssl=False)
 create_directory("content/")
 ay = 0
 prev_value = 0
-url = "https://gelbooru.com/index.php?page=post&s=list&tags="
+url = "https://gelbooru.com/index.php?page=post&s=list&tags=wallpaper"
 tags = input("please write tags separated by comma(not more than 2): ")
 
 if ":" in tags:
@@ -50,8 +51,8 @@ if " " in tags:
 folder = "/content/" + tags
 if "," in tags:
     tags = tags.split(',')
-    url += tags[0] + '+' + tags[1]
-    folder = "content/" + tags[0] + '/' + tags[0]
+    url += '+' + tags[0] + '+' + tags[1]
+    folder = "content/" + tags[0]
 else:
     url += tags
 create_directory(folder)
@@ -62,7 +63,7 @@ response = requests.get(url_page, headers={'User-Agent': ua.chrome})
 soup = BeautifulSoup(response.text, 'html.parser')
 images = soup.find_all("a", id=True)
 #choose a random image from the 1st page
-a = images[random.randint(1,46)]
+a = images[random.randint(0,41)]
 post_url = "https:" + a['href']
 #requesting the image page
 response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
@@ -82,4 +83,3 @@ for img in images_post:
             image_scrape(img['href'].replace(".com//", ".com/"), extension, folder)
         except ValueError:
             pass
-
