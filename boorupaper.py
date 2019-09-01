@@ -5,6 +5,7 @@ import ssl
 import subprocess
 import os
 import random
+import shutil
 
 def image_scrape(url, file_type, folder):
         extension = file_type
@@ -54,32 +55,31 @@ if "," in tags:
 else:
     url += tags
 create_directory(folder)
-while ay < 2:
-    url_page = url + "&pid=" + str(ay)
-    print(url_page)
-    response = requests.get(url_page, headers={'User-Agent': ua.chrome})
-    soup = BeautifulSoup(response.text, 'html.parser')
-    images = soup.find_all("a", id=True)
-    #choose a random image from the 1st page
-    a = images[random.randint(1,46)]
-    post_url = "https:" + a['href']
-    response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
-    soup_new = BeautifulSoup(response_post.text, 'html.parser')
-    images_post = soup_new.find_all("a")
-    for img in images_post:
-        if "Original" in img.text:
-            try:
-                if '.png' in img['href']:
-                    extension = '.png'
-                elif '.jpg' in img['href'] or '.jpeg' in img['href']:
-                    extension = '.jpeg'
-                elif '.gif' in img['href']:
-                    extension = '.gif'
-                else:
-                    extension = ".jpg"
-                print(img['href'].replace(".com//", ".com/"))
-                image_scrape(img['href'].replace(".com//", ".com/"), extension, folder)
-            except ValueError:
-                pass
-    ay += 2
+#creating the search link for requested tags
+url_page = url + "&pid=" + str(ay)
+print(url_page)
+response = requests.get(url_page, headers={'User-Agent': ua.chrome})
+soup = BeautifulSoup(response.text, 'html.parser')
+images = soup.find_all("a", id=True)
+#choose a random image from the 1st page
+a = images[random.randint(1,46)]
+post_url = "https:" + a['href']
+#requesting the image page
+response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
+soup_new = BeautifulSoup(response_post.text, 'html.parser')
+images_post = soup_new.find_all("a")
+for img in images_post:
+    if "Original" in img.text:
+        try:
+            if '.png' in img['href']:
+                extension = '.png'
+            elif '.jpg' in img['href'] or '.jpeg' in img['href']:
+                extension = '.jpeg'
+            elif '.gif' in img['href']:
+                extension = '.gif'
+            else:
+                extension = ".jpg"
+            image_scrape(img['href'].replace(".com//", ".com/"), extension, folder)
+        except ValueError:
+            pass
 
