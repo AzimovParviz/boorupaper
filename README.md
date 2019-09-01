@@ -1,2 +1,2 @@
 # boorupaper
-Fetch a random picture from gelbooru.com image aggregating site to use as a wallpaper on macOS device
+Fetch a picture from gelbooru.com image aggregating site to use as a wallpaper on macOS device
