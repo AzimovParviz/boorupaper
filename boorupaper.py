@@ -5,6 +5,8 @@ import ssl
 import subprocess
 import os
 import random
+import pathlib
+
 
 def image_scrape(url, file_type, folder):
         extension = file_type
@@ -39,7 +41,7 @@ ua = UserAgent(verify_ssl=False)
 create_directory("content/")
 ay = 0
 prev_value = 0
-url = "https://gelbooru.com/index.php?page=post&s=list&tags="
+url = "https://gelbooru.com/index.php?page=post&s=list&tags=wallpaper"
 tags = input("please write tags separated by comma(not more than 2): ")
 
 if ":" in tags:
@@ -49,37 +51,35 @@ if " " in tags:
 folder = "/content/" + tags
 if "," in tags:
     tags = tags.split(',')
-    url += tags[0] + '+' + tags[1]
-    folder = "content/" + tags[0] + '/' + tags[0]
+    url += '+' + tags[0] + '+' + tags[1]
+    folder = "content/" + tags[0]
 else:
     url += tags
 create_directory(folder)
-while ay < 2:
-    url_page = url + "&pid=" + str(ay)
-    print(url_page)
-    response = requests.get(url_page, headers={'User-Agent': ua.chrome})
-    soup = BeautifulSoup(response.text, 'html.parser')
-    images = soup.find_all("a", id=True)
-    #choose a random image from the 1st page
-    a = images[random.randint(1,46)]
-    post_url = "https:" + a['href']
-    response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
-    soup_new = BeautifulSoup(response_post.text, 'html.parser')
-    images_post = soup_new.find_all("a")
-    for img in images_post:
-        if "Original" in img.text:
-            try:
-                if '.png' in img['href']:
-                    extension = '.png'
-                elif '.jpg' in img['href'] or '.jpeg' in img['href']:
-                    extension = '.jpeg'
-                elif '.gif' in img['href']:
-                    extension = '.gif'
-                else:
-                    extension = ".jpg"
-                print(img['href'].replace(".com//", ".com/"))
-                image_scrape(img['href'].replace(".com//", ".com/"), extension, folder)
-            except ValueError:
-                pass
-    ay += 2
-
+#creating the search link for requested tags
+url_page = url + "&pid=" + str(ay)
+print(url_page)
+response = requests.get(url_page, headers={'User-Agent': ua.chrome})
+soup = BeautifulSoup(response.text, 'html.parser')
+images = soup.find_all("a", id=True)
+#choose a random image from the 1st page
+a = images[random.randint(0,41)]
+post_url = "https:" + a['href']
+#requesting the image page
+response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
+soup_new = BeautifulSoup(response_post.text, 'html.parser')
+images_post = soup_new.find_all("a")
+for img in images_post:
+    if "Original" in img.text:
+        try:
+            if '.png' in img['href']:
+                extension = '.png'
+            elif '.jpg' in img['href'] or '.jpeg' in img['href']:
+                extension = '.jpeg'
+            elif '.gif' in img['href']:
+                extension = '.gif'
+            else:
+                extension = ".jpg"
+            image_scrape(img['href'].replace(".com//", ".com/"), extension, folder)
+        except ValueError:
+            pass
