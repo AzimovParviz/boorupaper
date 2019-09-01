@@ -1,0 +1,83 @@
+import requests
+from bs4 import BeautifulSoup
+from fake_useragent import UserAgent
+import ssl
+import subprocess
+import os
+
+def image_scrape(url, file_type, folder):
+        extension = file_type
+        filename = folder + extension
+        r = requests.get(url)
+        with open(filename, 'wb') as outfile:
+            outfile.write(r.content)
+        print("success")
+        setpaper(filename)
+
+
+def setpaper(file):
+        cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"/" + \
+        os.path.dirname(os.path.abspath(__file__)) + "/" + file + "\" as POSIX file" + "\'"
+        #example:
+        #osascript -e 'tell application "Finder" to set desktop picture to POSIX file "/content/wallpaper/wallpaper.png"'
+        print(cmd)
+        subprocess.call(cmd, shell=True)
+
+def create_directory(folder):
+    try:
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+    except OSError:
+        print("error creating a directory uwu")
+
+
+#so no ssl verification errors are given from urlretrieve
+ssl._create_default_https_context = ssl._create_unverified_context
+#opening the website and getting the direct links to images
+ua = UserAgent(verify_ssl=False)
+create_directory("content/")
+ay = 0
+prev_value = 0
+url = "https://gelbooru.com/index.php?page=post&s=list&tags="
+tags = input("please write tags separated by comma(not more than 2): ")
+
+if ":" in tags:
+    tags.replace(":", "%3a")
+if " " in tags:
+    tags.replace(" ", "_")
+folder = "/content/" + tags
+if "," in tags:
+    tags = tags.split(',')
+    url += tags[0] + '+' + tags[1]
+    folder = "content/" + tags[0] + '/' + tags[0]
+else:
+    url += tags
+create_directory(folder)
+while ay < 2:
+    url_page = url + "&pid=" + str(ay)
+    print(url_page)
+    response = requests.get(url_page, headers={'User-Agent': ua.chrome})
+    soup = BeautifulSoup(response.text, 'html.parser')
+    images = soup.find_all("a", id=True)
+    for a in images:
+        post_url = "https:" + a['href']
+        response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
+        soup_new = BeautifulSoup(response_post.text, 'html.parser')
+        images_post = soup_new.find_all("a")
+        for img in images_post:
+            if "Original" in img.text:
+                try:
+                    if '.png' in img['href']:
+                        extension = '.png'
+                    elif '.jpg' in img['href'] or '.jpeg' in img['src']:
+                        extension = '.jpeg'
+                    elif '.gif' in img['href']:
+                        extension = '.gif'
+                    else:
+                        extension = ".jpg"
+                    print(img['href'].replace(".com//", ".com/"))
+                    image_scrape(img['href'].replace(".com//", ".com/"), extension, folder)
+                except ValueError:
+                    pass
+    ay += 2
+
