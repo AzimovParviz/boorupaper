@@ -4,6 +4,7 @@ from fake_useragent import UserAgent
 import ssl
 import subprocess
 import os
+import random
 
 def image_scrape(url, file_type, folder):
         extension = file_type
@@ -16,7 +17,7 @@ def image_scrape(url, file_type, folder):
 
 
 def setpaper(file):
-        cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"/" + \
+        cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"" + \
         os.path.dirname(os.path.abspath(__file__)) + "/" + file + "\" as POSIX file" + "\'"
         #example:
         #osascript -e 'tell application "Finder" to set desktop picture to "/path-to-script/wallpaper.png" as POSIX file'
@@ -59,25 +60,26 @@ while ay < 2:
     response = requests.get(url_page, headers={'User-Agent': ua.chrome})
     soup = BeautifulSoup(response.text, 'html.parser')
     images = soup.find_all("a", id=True)
-    for a in images:
-        post_url = "https:" + a['href']
-        response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
-        soup_new = BeautifulSoup(response_post.text, 'html.parser')
-        images_post = soup_new.find_all("a")
-        for img in images_post:
-            if "Original" in img.text:
-                try:
-                    if '.png' in img['href']:
-                        extension = '.png'
-                    elif '.jpg' in img['href'] or '.jpeg' in img['src']:
-                        extension = '.jpeg'
-                    elif '.gif' in img['href']:
-                        extension = '.gif'
-                    else:
-                        extension = ".jpg"
-                    print(img['href'].replace(".com//", ".com/"))
-                    image_scrape(img['href'].replace(".com//", ".com/"), extension, folder)
-                except ValueError:
-                    pass
+    #choose a random image from the 1st page
+    a = images[random.randint(1,46)]
+    post_url = "https:" + a['href']
+    response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
+    soup_new = BeautifulSoup(response_post.text, 'html.parser')
+    images_post = soup_new.find_all("a")
+    for img in images_post:
+        if "Original" in img.text:
+            try:
+                if '.png' in img['href']:
+                    extension = '.png'
+                elif '.jpg' in img['href'] or '.jpeg' in img['href']:
+                    extension = '.jpeg'
+                elif '.gif' in img['href']:
+                    extension = '.gif'
+                else:
+                    extension = ".jpg"
+                print(img['href'].replace(".com//", ".com/"))
+                image_scrape(img['href'].replace(".com//", ".com/"), extension, folder)
+            except ValueError:
+                pass
     ay += 2
 
