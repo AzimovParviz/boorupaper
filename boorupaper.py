@@ -36,7 +36,9 @@ def setpaper(file):
             subprocess.call(cmd, shell=True)
             print("success")
         elif platform.startswith('linux'):
-            cmd = "gsettings set org.mate.desktop.background picture-uri file://" + "\"" + \
+            cmd = "gsettings set org.mate.background picture-filename " + \
+            os.path.dirname(os.path.abspath(__file__)) + "/" + \
+            file
             file + "\""
             print(cmd)
             subprocess.call(cmd, shell=True)
