@@ -6,6 +6,13 @@ import subprocess
 import os
 import random
 import pathlib
+from sys import platform
+
+def os_check():
+    if platform == 'linux2':
+        return 1
+    elif platform == 'darwin':
+        return 2
 
 
 def image_scrape(url, file_type, folder):
@@ -15,17 +22,20 @@ def image_scrape(url, file_type, folder):
         with open(filename, 'wb') as outfile:
             outfile.write(r.content)
         print("success")
-        setpaper(filename)
+        setpaper(filename, os_check())
 
 
-def setpaper(file):
-        cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"" + \
-        os.path.dirname(os.path.abspath(__file__)) + "/" + file + "\" as POSIX file" + "\'"
-        #example:
-        #osascript -e 'tell application "Finder" to set desktop picture to "/path-to-script/wallpaper.png" as POSIX file'
-        print(cmd)
-        subprocess.call(cmd, shell=True)
-
+def setpaper(file, os):
+        if os==2:
+            cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"" + \
+            os.path.dirname(os.path.abspath(__file__)) + "/" + file + "\" as POSIX file" + "\'"
+            #example:
+            #osascript -e 'tell application "Finder" to set desktop picture to "/path-to-script/wallpaper.png" as POSIX file'
+            print(cmd)
+            subprocess.call(cmd, shell=True)
+        elif os==1:
+            cmd = "gsettings set org.gnome.desktop.background picture-uri file://" + file
+            subprocess.call(cmd, shell=True)
 def create_directory(folder):
     try:
         if not os.path.exists(folder):
