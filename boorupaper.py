@@ -58,7 +58,7 @@ ua = UserAgent(verify_ssl=False)
 create_directory("content/")
 ay = 0
 prev_value = 0
-url = "https://gelbooru.com/index.php?page=post&s=list&tags=wallpaper"
+url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+"
 tags = input("please write tags separated by comma(not more than 2): ")
 
 if ":" in tags:
@@ -68,7 +68,7 @@ if " " in tags:
 folder = "/content/" + tags
 if "," in tags:
     tags = tags.split(',')
-    url += '+' + tags[0] + '+' + tags[1]
+    url += tags[0] + '+' + tags[1]
     folder = "content/" + tags[0]
 else:
     url += tags
