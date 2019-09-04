@@ -63,7 +63,7 @@ response = requests.get(url_page, headers={'User-Agent': ua.chrome})
 soup = BeautifulSoup(response.text, 'html.parser')
 images = soup.find_all("a", id=True)
 #choose a random image from the 1st page
-a = images[random.randint(0,41)]
+a = images[random.randint(0,len(images))]
 post_url = "https:" + a['href']
 #requesting the image page
 response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
