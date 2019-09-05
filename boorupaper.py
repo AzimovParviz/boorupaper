@@ -58,7 +58,7 @@ ua = UserAgent(verify_ssl=False)
 create_directory("content/")
 ay = 0
 prev_value = 0
-url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+"
+url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+rating:safe+"
 tags = input("please write tags separated by comma(not more than 2): ")
 
 if ":" in tags:
