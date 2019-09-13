@@ -6,6 +6,15 @@ import subprocess
 import os
 import random
 import pathlib
+from sys import platform
+
+def os_check():
+    if platform == 'linux2':
+        print("currently on Linux")
+        return 1
+    elif platform == 'darwin':
+        print("currently on Mac OS")
+        return 2
 
 
 def image_scrape(url, file_type, folder):
@@ -14,18 +23,26 @@ def image_scrape(url, file_type, folder):
         r = requests.get(url)
         with open(filename, 'wb') as outfile:
             outfile.write(r.content)
-        print("success")
         setpaper(filename)
 
 
 def setpaper(file):
-        cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"" + \
-        os.path.dirname(os.path.abspath(__file__)) + "/" + file + "\" as POSIX file" + "\'"
-        #example:
-        #osascript -e 'tell application "Finder" to set desktop picture to "/path-to-script/wallpaper.png" as POSIX file'
-        print(cmd)
-        subprocess.call(cmd, shell=True)
-
+        if platform.startswith('darwin'):
+            cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"" + \
+            os.path.dirname(os.path.abspath(__file__)) + "/" + file + "\" as POSIX file" + "\'"
+            #example:
+            #osascript -e 'tell application "Finder" to set desktop picture to "/path-to-script/wallpaper.png" as POSIX file'
+            print(cmd)
+            subprocess.call(cmd, shell=True)
+            print("success")
+        elif platform.startswith('linux'):
+            cmd = "gsettings set org.mate.background picture-filename " + \
+            os.path.dirname(os.path.abspath(__file__)) + "/" + \
+            file
+            file + "\""
+            print(cmd)
+            subprocess.call(cmd, shell=True)
+            print("success")
 def create_directory(folder):
     try:
         if not os.path.exists(folder):
@@ -41,17 +58,23 @@ ua = UserAgent(verify_ssl=False)
 create_directory("content/")
 ay = 0
 prev_value = 0
-url = "https://gelbooru.com/index.php?page=post&s=list&tags=wallpaper"
-tags = input("please write tags separated by comma(not more than 2): ")
-
+url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+rating:safe+"
+tags = input("please write tags separated by comma: ")
 if ":" in tags:
     tags.replace(":", "%3a")
 if " " in tags:
     tags.replace(" ", "_")
 folder = "/content/" + tags
+j = 0
 if "," in tags:
     tags = tags.split(',')
-    url += '+' + tags[0] + '+' + tags[1]
+    for items in tags:
+        if j<len(tags):
+            url += tags[j] + '+'
+        else:
+            url += tags[j]
+        j += 1
+
     folder = "content/" + tags[0]
 else:
     url += tags
@@ -63,7 +86,7 @@ response = requests.get(url_page, headers={'User-Agent': ua.chrome})
 soup = BeautifulSoup(response.text, 'html.parser')
 images = soup.find_all("a", id=True)
 #choose a random image from the 1st page
-a = images[random.randint(0,41)]
+a = images[random.randint(0,len(images))]
 post_url = "https:" + a['href']
 #requesting the image page
 response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
