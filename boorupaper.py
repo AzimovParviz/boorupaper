@@ -59,16 +59,22 @@ create_directory("content/")
 ay = 0
 prev_value = 0
 url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+rating:safe+"
-tags = input("please write tags separated by comma(not more than 2): ")
-
+tags = input("please write tags separated by comma: ")
 if ":" in tags:
     tags.replace(":", "%3a")
 if " " in tags:
     tags.replace(" ", "_")
 folder = "/content/" + tags
+j = 0
 if "," in tags:
     tags = tags.split(',')
-    url += tags[0] + '+' + tags[1]
+    for items in tags:
+        if j<len(tags):
+            url += tags[j] + '+'
+        else:
+            url += tags[j]
+        j += 1
+
     folder = "content/" + tags[0]
 else:
     url += tags
