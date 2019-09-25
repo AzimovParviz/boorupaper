@@ -51,6 +51,7 @@ def create_directory(folder):
             os.makedirs(folder)
     except OSError:
         print("error creating a directory uwu")
+        raise
 
 
 #so no ssl verification errors are given from urlretrieve
@@ -77,7 +78,7 @@ if "," in tags:
             url += tags[j]
         j += 1
 
-    folder = "/content/" + tags[0]
+    folder = "content/" + tags[0]
 else:
     url += tags
 create_directory(folder)
