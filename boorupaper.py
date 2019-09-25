@@ -43,6 +43,8 @@ def setpaper(file):
             print(cmd)
             subprocess.call(cmd, shell=True)
             print("success")
+
+
 def create_directory(folder):
     try:
         if not os.path.exists(folder):
@@ -61,9 +63,9 @@ prev_value = 0
 url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+rating:safe+"
 tags = input("please write tags separated by comma: ")
 if ":" in tags:
-    tags.replace(":", "%3a")
+    tags = tags.replace(":", "%3a")
 if " " in tags:
-    tags.replace(" ", "_")
+    tags = tags.replace(" ", "_")
 folder = "/content/" + tags
 j = 0
 if "," in tags:
@@ -75,7 +77,7 @@ if "," in tags:
             url += tags[j]
         j += 1
 
-    folder = "content/" + tags[0]
+    folder = "/content/" + tags[0]
 else:
     url += tags
 create_directory(folder)
