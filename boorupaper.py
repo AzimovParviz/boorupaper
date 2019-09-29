@@ -8,6 +8,7 @@ import random
 import pathlib
 from sys import platform
 
+#checks for Linux/MacOS
 def os_check():
     if platform == 'linux2':
         print("currently on Linux")
@@ -19,11 +20,21 @@ def os_check():
 
 def image_scrape(url, file_type, folder):
         extension = file_type
+        i = 1
+        while True:
+            if os.path.exists(folder+str(i)+file_type):
+                i += 1
+            else:
+                folder = folder + str(i)
+                break
         filename = folder + extension
         r = requests.get(url)
+        #os.makedirs(folder)
         with open(filename, 'wb') as outfile:
             outfile.write(r.content)
         setpaper(filename)
+
+
 
 
 def setpaper(file):
@@ -43,12 +54,15 @@ def setpaper(file):
             print(cmd)
             subprocess.call(cmd, shell=True)
             print("success")
+
+
 def create_directory(folder):
     try:
         if not os.path.exists(folder):
             os.makedirs(folder)
     except OSError:
         print("error creating a directory uwu")
+        raise
 
 
 #so no ssl verification errors are given from urlretrieve
@@ -61,10 +75,10 @@ prev_value = 0
 url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+rating:safe+"
 tags = input("please write tags separated by comma: ")
 if ":" in tags:
-    tags.replace(":", "%3a")
+    tags = tags.replace(":", "%3a")
 if " " in tags:
-    tags.replace(" ", "_")
-folder = "/content/" + tags
+    tags = tags.replace(" ", "_")
+folder = "content/" + tags
 j = 0
 if "," in tags:
     tags = tags.split(',')
@@ -78,7 +92,7 @@ if "," in tags:
     folder = "content/" + tags[0]
 else:
     url += tags
-create_directory(folder)
+#create_directory(folder)
 #creating the search link for requested tags
 url_page = url + "&pid=" + str(ay)
 print(url_page)
