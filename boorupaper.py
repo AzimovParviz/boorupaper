@@ -21,12 +21,16 @@ def os_check():
 def image_scrape(url, file_type, folder):
         extension = file_type
         i = 1
+        #checks if file exists and adds a number if does exist
         while True:
             if os.path.exists(folder+str(i)+file_type):
                 i += 1
             else:
-                folder = folder + str(i)
-                break
+                if i == 0:
+                    break
+                else:
+                    folder = folder + str(i)
+                    break
         filename = folder + extension
         r = requests.get(url)
         #os.makedirs(folder)
