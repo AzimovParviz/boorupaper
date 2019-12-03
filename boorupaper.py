@@ -70,7 +70,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 #opening the website and getting the direct links to images
 ua = UserAgent(verify_ssl=False)
 create_directory("content/")
-ay = 0
+ay = [0]
 prev_value = 0
 url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+rating:safe+"
 tags = input("please write tags separated by comma: ")
@@ -94,13 +94,21 @@ else:
     url += tags
 #create_directory(folder)
 #creating the search link for requested tags
-url_page = url + "&pid=" + str(ay)
+response = requests.get(url, headers={'User-Agent':ua.chrome})
+soup = BeautifulSoup(response.text, 'html.parser')
+paginator = soup.find(class_="pagination")
+for pages in paginator:
+    ay.append(ay[len(ay)-1]+42)
+print(ay)
+rand_page = ay[random.randint(0,len(ay))]
+print(rand_page)
+url_page = url + "&pid=" + str(rand_page)
 print(url_page)
 response = requests.get(url_page, headers={'User-Agent': ua.chrome})
 soup = BeautifulSoup(response.text, 'html.parser')
 images = soup.find_all("a", id=True)
 #choose a random image from the 1st page
-a = images[random.randint(0,len(images))]
+a = images[random.randint(0,len(images))-1]
 post_url = "https:" + a['href']
 #requesting the image page
 response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
