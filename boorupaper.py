@@ -100,7 +100,7 @@ paginator = soup.find(class_="pagination")
 for pages in paginator:
     ay.append(ay[len(ay)-1]+42)
 print(ay)
-rand_page = ay[random.randint(0,len(ay))]
+rand_page = ay[random.randint(0,len(ay)-1)]
 print(rand_page)
 url_page = url + "&pid=" + str(rand_page)
 print(url_page)
