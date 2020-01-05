@@ -47,13 +47,32 @@ def setpaper(file):
             subprocess.call(cmd, shell=True)
             print("success")
         elif platform.startswith('linux'):
-            cmd = "gsettings set org.mate.background picture-filename " + \
-            os.path.dirname(os.path.abspath(__file__)) + "/" + \
-            file
-            file + "\""
-            print(cmd)
-            subprocess.call(cmd, shell=True)
-            print("success")
+            if 'mate' in os.environ.get('DESKTOP_SESSION'):
+                cmd = "gsettings set org.mate.background picture-filename " + \
+                os.path.dirname(os.path.abspath(__file__)) + "/" + \
+                file
+                file + "\""
+                print(cmd)
+                subprocess.call(cmd, shell=True)
+                print("success")
+            elif 'plasma' in os.environ.get('DESKTOP_SESSION'):
+                cmd ="""
+                qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
+    var allDesktops = desktops();
+    print (allDesktops);
+    for (i=0;i<allDesktops.length;i++) {{
+        d = allDesktops[i];
+        d.wallpaperPlugin = "org.kde.image";
+        d.currentConfigGroup = Array("Wallpaper",
+                                     "org.kde.image",
+                                     "General");
+        d.writeConfig("Image", "file://%s")
+    }}
+'
+                """
+                print(cmd % (os.path.dirname(os.path.abspath(__file__))+'/'+file))
+                subprocess.call(cmd % (os.path.dirname(os.path.abspath(__file__))+'/'+file), shell=True)
+                print("success")
 
 
 def create_directory(folder):
