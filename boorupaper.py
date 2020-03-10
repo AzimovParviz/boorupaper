@@ -8,14 +8,14 @@ import random
 import pathlib
 from sys import platform
 
-#checks for Linux/MacOS
-def os_check():
-    if platform == 'linux2':
-        print("currently on Linux")
-        return 1
-    elif platform == 'darwin':
-        print("currently on Mac OS")
-        return 2
+# #checks for Linux/MacOS
+# def os_check():
+#     if platform == 'linux2':
+#         print("currently on Linux")
+#         return 1
+#     elif platform == 'darwin':
+#         print("currently on Mac OS")
+#         return 2
 
 
 def image_scrape(url, file_type, folder):
@@ -73,14 +73,23 @@ def setpaper(file):
                 print(cmd % (os.path.dirname(os.path.abspath(__file__))+'/'+file))
                 subprocess.call(cmd % (os.path.dirname(os.path.abspath(__file__))+'/'+file), shell=True)
                 print("success")
-
+            elif 'gnome' in os.environ.get('DESKTOP_SESSION'):
+                cmd = "gsettings set org.gnome.desktop.background picture-uri file:/// \"" + \
+                os.path.dirname(os.path.abspath(__file__)) + "/" + \
+                file
+                file + "\""
+                print(cmd)
+                subprocess.call(cmd, shell=True)
+                print("success")
+                
 
 def create_directory(folder):
     try:
         if not os.path.exists(folder):
             os.makedirs(folder)
     except OSError:
-        print("error creating a directory uwu")
+        print("oopsie we made a woopsie wen cweating a diwectory UwU")
+        #error message is as horrible as i could think of so there is motivation to not make mistakes
         raise
 
 
