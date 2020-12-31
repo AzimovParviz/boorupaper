@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
@@ -6,6 +7,7 @@ import subprocess
 import os
 import random
 import pathlib
+from pathlib import Path
 from sys import platform
 
 # #checks for Linux/MacOS
@@ -39,8 +41,7 @@ def image_scrape(url, file_type, folder):
 
 def setpaper(file):
         if platform.startswith('darwin'):
-            cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"" + \
-            os.path.dirname(os.path.abspath(__file__)) + "/" + file + "\" as POSIX file" + "\'"
+            cmd = "osascript -e \'tell application \"Finder\" to set desktop picture to \"" + file + "\" as POSIX file" + "\'"
             #example:
             #osascript -e 'tell application "Finder" to set desktop picture to "/path-to-script/wallpaper.png" as POSIX file'
             print(cmd)
@@ -97,7 +98,8 @@ def create_directory(folder):
 ssl._create_default_https_context = ssl._create_unverified_context
 #opening the website and getting the direct links to images
 ua = UserAgent(verify_ssl=False)
-create_directory("content/")
+home = str(Path.home())
+create_directory(home+"/.boorupapers/content/")
 ay = [0]
 prev_value = 0
 url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+rating:safe+"
@@ -106,7 +108,7 @@ if ":" in tags:
     tags = tags.replace(":", "%3a")
 if " " in tags:
     tags = tags.replace(" ", "_")
-folder = "content/" + tags
+folder = home+"/.boorupapers/content/" + tags
 j = 0
 if "," in tags:
     tags = tags.split(',')
@@ -117,7 +119,7 @@ if "," in tags:
             url += tags[j]
         j += 1
 
-    folder = "content/" + tags[0]
+    folder = home+"/.boorupapers/content/" + tags[0]
 else:
     url += tags
 #create_directory(folder)
