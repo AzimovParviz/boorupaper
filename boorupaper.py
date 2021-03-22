@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import requests
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
@@ -97,7 +98,7 @@ def create_directory(folder):
 ssl._create_default_https_context = ssl._create_unverified_context
 #opening the website and getting the direct links to images
 ua = UserAgent(verify_ssl=False)
-create_directory("content/")
+create_directory("~/content/")
 ay = [0]
 prev_value = 0
 url = "https://gelbooru.com/index.php?page=post&s=list&tags=highres+rating:safe+"
@@ -106,7 +107,7 @@ if ":" in tags:
     tags = tags.replace(":", "%3a")
 if " " in tags:
     tags = tags.replace(" ", "_")
-folder = "content/" + tags
+folder = "~/content/" + tags
 j = 0
 if "," in tags:
     tags = tags.split(',')
@@ -117,7 +118,7 @@ if "," in tags:
             url += tags[j]
         j += 1
 
-    folder = "content/" + tags[0]
+    folder = "~/content/" + tags[0]
 else:
     url += tags
 #create_directory(folder)
@@ -128,7 +129,7 @@ paginator = soup.find(class_="pagination")
 for pages in paginator:
     ay.append(ay[len(ay)-1]+42)
 print(ay)
-rand_page = ay[random.randint(0,len(ay)-4)]
+rand_page = ay[random.randint(0,len(ay))]
 print(rand_page)
 url_page = url + "&pid=" + str(rand_page)
 print(url_page)
@@ -137,7 +138,7 @@ soup = BeautifulSoup(response.text, 'html.parser')
 images = soup.find_all("a", id=True)
 #choose a random image from the 1st page
 a = images[random.randint(0,len(images))-1]
-post_url = "https:" + a['href']
+post_url = a['href']
 #requesting the image page
 response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
 soup_new = BeautifulSoup(response_post.text, 'html.parser')
