@@ -31,7 +31,6 @@ def image_scrape(url, file_type, folder):
                 break
         filename = folder + extension
         r = requests.get(url)
-        #os.makedirs(folder)
         with open(filename, 'wb') as outfile:
             outfile.write(r.content)
         setpaper(filename)
@@ -57,6 +56,7 @@ def setpaper(file):
                 subprocess.call(cmd, shell=True)
                 print("success")
             elif 'plasma' in os.environ.get('DESKTOP_SESSION'):
+                print("the file is: "+file)
                 cmd ="""
                 qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript '
     var allDesktops = desktops();
@@ -71,8 +71,8 @@ def setpaper(file):
     }}
 '
                 """
-                print(cmd % (os.path.dirname(os.path.abspath(__file__))+'/'+file))
-                subprocess.call(cmd % (os.path.dirname(os.path.abspath(__file__))+'/'+file), shell=True)
+                print(cmd % file)
+                subprocess.call(cmd % file, shell=True)
                 print("success")
             elif 'gnome' in os.environ.get('DESKTOP_SESSION'):
                 cmd = "gsettings set org.gnome.desktop.background picture-uri file:/// \"" + \
@@ -99,6 +99,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 #opening the website and getting the direct links to images
 ua = UserAgent(verify_ssl=False)
 home = str(Path.home())
+print("home directory is: "+home)
 create_directory(home+"/.boorupapers/content/")
 ay = [0]
 prev_value = 0
@@ -130,7 +131,7 @@ paginator = soup.find(class_="pagination")
 for pages in paginator:
     ay.append(ay[len(ay)-1]+42)
 print(ay)
-rand_page = ay[random.randint(0,len(ay))]
+rand_page = ay[random.randint(0,len(ay)-2)]
 print(rand_page)
 url_page = url + "&pid=" + str(rand_page)
 print(url_page)
