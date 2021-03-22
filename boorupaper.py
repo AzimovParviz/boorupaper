@@ -130,7 +130,7 @@ paginator = soup.find(class_="pagination")
 for pages in paginator:
     ay.append(ay[len(ay)-1]+42)
 print(ay)
-rand_page = ay[random.randint(0,len(ay)-4)]
+rand_page = ay[random.randint(0,len(ay))]
 print(rand_page)
 url_page = url + "&pid=" + str(rand_page)
 print(url_page)
@@ -139,7 +139,7 @@ soup = BeautifulSoup(response.text, 'html.parser')
 images = soup.find_all("a", id=True)
 #choose a random image from the 1st page
 a = images[random.randint(0,len(images))-1]
-post_url = "https:" + a['href']
+post_url = a['href']
 #requesting the image page
 response_post = requests.get(post_url, headers={'User-Agent': ua.chrome})
 soup_new = BeautifulSoup(response_post.text, 'html.parser')
